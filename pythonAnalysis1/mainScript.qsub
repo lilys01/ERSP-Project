@@ -1,0 +1,11 @@
+#PBS -l mem=8gb
+#PBS -l walltime=01:00:00
+#PBS -N qiitaChallenge
+#PBS -M lsteiner@ucsd.edu 
+#PBS -m abe
+cd $PBS_O_WORKDIR
+source activate qiime2-2020.11
+set -e
+set -x
+
+python analysis.py

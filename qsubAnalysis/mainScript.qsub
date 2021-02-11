@@ -1,0 +1,48 @@
+#PBS -l mem=8gb
+#PBS -l walltime=01:00:00
+#PBS -N qiitaChallenge
+#PBS -M lsteiner@ucsd.edu 
+#PBS -m abe
+cd $PBS_O_WORKDIR
+source activate qiime2-2020.11
+set -e
+set -x
+#
+##unweighted unifrac
+#qiime diversity beta-phylogenetic \
+#  --i-table ../feature-table.qza \
+#  --i-phylogeny ../tree.qza \
+#  --p-metric unweighted_unifrac \
+#  --o-distance-matrix unw-unifrac.qza
+##pcoa
+#qiime diversity pcoa \
+#  --i-distance-matrix unw-unifrac.qza \
+#  --o-pcoa unw-unifrac-pcoa.qza
+##emperor
+#qiime emperor plot \
+#  --i-pcoa unw-unifrac-pcoa.qza \
+#  --m-metadata-file ../sample-metadata.txt \
+#  --o-visualization unw-unifrac.qzv
+#permanova plants
+qiime diversity beta-group-significance \
+  --i-distance-matrix unw-unifrac.qza \
+  --m-metadata-file ../sample-metadata.txt \
+  --m-metadata-column types_of_plants \
+  --o-visualization unw-unifrac-types-of-plants-significance.qzv \
+  --p-pairwise
+
+#permanova age
+qiime diversity beta-group-significance \
+  --i-distance-matrix unw-unifrac.qza \
+  --m-metadata-file ../sample-metadata.txt \
+  --m-metadata-column age_cat \
+  --o-visualization unw-unifrac-ages-significance.qzv \
+  --p-pairwise
+
+#permanova antibiotics
+qiime diversity beta-group-significance \
+  --i-distance-matrix unw-unifrac.qza \
+  --m-metadata-file ../sample-metadata.txt \
+  --m-metadata-column antibiotic_history \
+  --o-visualization unw-unifrac-antibiotics-significance.qzv \
+  --p-pairwise
