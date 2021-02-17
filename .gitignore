@@ -1,3 +1,4 @@
 sample-metadata.txt
 filteringAnalysis/plots/taxa-bar-plots.qzv
 geneAnalysis/genes-ftable.qza
+geneAnalysis/filtered-gene-table.qza

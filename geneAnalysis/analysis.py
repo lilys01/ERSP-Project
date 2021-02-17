@@ -3,7 +3,7 @@ from qiime2.plugins import feature_table, emperor, phylogeny, taxa, empress
 from qiime2 import Artifact, Metadata
 import biom
 import os
-from paritioning import partition
+from partitioning import partition
 
 #importing data
 fTable = Artifact.load('genes-ftable.qza')
@@ -16,5 +16,7 @@ filtTable = filtResult.filtered_table
 #filtTable.save('filtered-gene-table.qza')
 
 #paritioning 
+btable = filtTable.view(biom.Table)
+partition(btable,'/projects/wol/release/markers/phylophlan.intree.map', 'gene-tables') 
 
 

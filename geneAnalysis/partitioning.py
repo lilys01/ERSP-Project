@@ -18,7 +18,7 @@ from biom.util import biom_open
 def partition(biomTable, map, outputDir):
 
     # load input BIOM table
-    table = load_table(biomTable)
+    table = biomTable
     samples = table.ids(axis='sample')
     genby = table.generated_by
 
@@ -54,7 +54,7 @@ def partition(biomTable, map, outputDir):
     makedirs(outdir, exist_ok=True)
     for marker, (gs, rows) in tables.items():
         with biom_open(join(outdir, f'{marker}.biom'), 'w') as f:
-            Table(rows, gs, samples).to_hdf5(f, genby)
+            Table(rows, gs, samples).to_hdf5(f,'foobar')
 
 
 if __name__ == '__main__':
