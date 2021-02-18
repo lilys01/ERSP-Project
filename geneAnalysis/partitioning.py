@@ -54,8 +54,10 @@ def partition(biomTable, map, outputDir):
     makedirs(outdir, exist_ok=True)
     for marker, (gs, rows) in tables.items():
         with biom_open(join(outdir, f'{marker}.biom'), 'w') as f:
-            Table(rows, gs, samples).to_hdf5(f,'foobar')
-
+           # Table(rows, gs, samples).to_hdf5(f,'foobar') 
+#replace line with import feature table (ar = qiime2.Artifact.import_data('FeatureTable[Frequency]', T) where T= biom.table(). then save (ar.save(name))
+            ar = qiime2.Artifact.import_data('FeatureTable[Frequency]', f)
+            ar.save('{marker}.qzv')
 
 if __name__ == '__main__':
     main()

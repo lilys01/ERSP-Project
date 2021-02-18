@@ -1,0 +1,8 @@
+ModuleCmd_Load.c(204):ERROR:105: Unable to locate a modulefile for 'git_2.9.3'
+++ python analysis.py
+Traceback (most recent call last):
+  File "analysis.py", line 20, in <module>
+    btable = filtTable.view(biom.Table)
+  File "/home/lsteiner/ERSP-Project/geneAnalysis/partitioning.py", line 59, in partition
+    ar = qiime2.Artifact.import_data('FeatureTable[Frequency]', f)
+NameError: name 'qiime2' is not defined
