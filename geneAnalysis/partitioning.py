@@ -13,7 +13,7 @@ from os import makedirs
 from os.path import join
 from biom import Table, load_table
 from biom.util import biom_open
-
+import qiime2
 
 def partition(biomTable, map, outputDir):
 
@@ -55,9 +55,9 @@ def partition(biomTable, map, outputDir):
     for marker, (gs, rows) in tables.items():
         with biom_open(join(outdir, f'{marker}.biom'), 'w') as f:
            # Table(rows, gs, samples).to_hdf5(f,'foobar') 
-#replace line with import feature table (ar = qiime2.Artifact.import_data('FeatureTable[Frequency]', T) where T= biom.table(). then save (ar.save(name))
-            ar = qiime2.Artifact.import_data('FeatureTable[Frequency]', f)
-            ar.save('{marker}.qzv')
+            ar = qiime2.Artifact.import_data('FeatureTable[Frequency]', Table(rows, gs, samples))
+            ar.save(join(outputDir, marker + '.qza'))
+           
 
 if __name__ == '__main__':
     main()

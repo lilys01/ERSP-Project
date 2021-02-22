@@ -23,10 +23,10 @@ partition(btable,'/projects/wol/release/markers/phylophlan.intree.map', 'gene-ta
 #set dictionaries with gene-tree and gene-table pairs for easy look up
 
 tablelookup = {}
-for f in glob.glob('/gene-tables/*.qza'):
-    basename = os.path.basename(f))
+''' for f in glob.glob('/gene-tables/*.qza'):
+    basename = os.path.basename(f)
     no_extension = os.path.splitext(basename)[0]
     lookup[no_extension] = f
 
 treelookup = {}
-for t in glob.glob('/gene-trees/*.qza')
+for t in glob.glob('/gene-trees/*.qza') ''' 
