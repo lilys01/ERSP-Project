@@ -1,7 +1,7 @@
 import qiime2
 from qiime2.plugins import diversity, feature_table, emperor, phylogeny, taxa, empress
 from qiime2 import Artifact
-
+#filtering methods added 
 #setting data variables
 fTable = Artifact.load('../feature-table.qza')
 tree = Artifact.load('../tree.qza')
