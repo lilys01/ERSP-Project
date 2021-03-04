@@ -4,6 +4,7 @@ from qiime2 import Artifact, Metadata
 import biom
 import os
 import glob
+import pandas as pd
 from partitioning import partition
 
 #importing data
@@ -46,16 +47,33 @@ dm = distMatrix.distance_matrix
 PCoA = diversity.actions.pcoa(distance_matrix=dm)
 pcoaResults = PCoA.pcoa 
 
+'''
 viz = emperor.actions.plot(pcoaResults, mdata)
-viz.visualization.save('emperor_plot.qzv')
+viz.visualization.save('p0097_emperor.qzv')
+
+summary = feature_table.actions.summarize(table=newtable, sample_metadata=mdata)
+summary.visualization.save('p0097_summary.qzv')
+'''
+
+'''Add a new category column to our metadata'''
 
 
+'''df = pd.DataFrame('../sample-metadata.txt')'''
+df = mdata.to_dataframe()
 
+'''bTable = biom.load_table('gene-tables/p0097.biom')'''
+bTable = qiime2.Artifact.load('gene-tables/p0097.qza').view(biom.Table)
 
+newCategory = pd.Series(bTable.sum('sample'), index=bTable.ids())
+df['p0097-read-counts'] = newCategory
 
+new_md = qiime2.Metadata(df)
 
+viz = emperor.actions.plot(pcoaResults, new_md)
+viz.visualization.save('p0097_emperor.qzv')
 
-
+summary = feature_table.actions.summarize(table=newtable, sample_metadata=new_md)
+summary.visualization.save('p0097_summary.qzv')
 
 
 
