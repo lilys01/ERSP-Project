@@ -1,10 +1,11 @@
 #PBS -l walltime=24:00:00
-#PBS -N qiitaChallenge
-#PBS -M jvsantan@ucsd.edu 
+#PBS -N qiitaChallenge 
 #PBS -m abe
+#PBS -t 1-2
+
 cd $PBS_O_WORKDIR
 source activate qiime2-2020.11
 set -e
 set -x
 
-python analysis.py
+python processor.py --parametersfile geneIds.txt --taskid $PBS_ARRAYID
