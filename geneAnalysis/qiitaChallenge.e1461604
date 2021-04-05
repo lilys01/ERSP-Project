@@ -1,3 +1,0 @@
-++ python analysis.py
-/home/jvsantan/miniconda3/envs/qiime2-2020.11/lib/python3.6/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:152: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.07382431218085257 and the largest is 6.272913323221821.
-  RuntimeWarning
