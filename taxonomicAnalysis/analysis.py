@@ -9,6 +9,8 @@ metadata = qiime2.Metadata.load('../sample-metadata.txt')
 #Distance Matrix
 distMatrix = diversity.pipelines.beta_phylogenetic(table=fTable, phylogeny=tree, metric='unweighted_unifrac')
 dm = distMatrix.distance_matrix
+dm.save('taxonomic-dist-matrix.qza')
+
 
 #obtaining PCoA
 PCoA = diversity.actions.pcoa(distance_matrix=dm)
