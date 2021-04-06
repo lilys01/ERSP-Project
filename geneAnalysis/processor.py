@@ -10,7 +10,8 @@ def process(parametersfile, taskid):
     details = open(parametersfile).readlines()
     geneName = details[taskid - 1]
     geneName = ''.join(geneName.split())
-    perGeneAnalysis(geneName)
+    tablelookup, treelookup = setDictionaries()
+    perGeneAnalysis(geneName, tablelookup, treelookup)
 
 
 if __name__ == '__main__':

@@ -38,10 +38,8 @@ group covid+ metadata together
 perform mantel test on each gene against species tree
  '''
 
-def perGeneAnalysis(key): 
+def perGeneAnalysis(key, tablelookup, treelookup): 
    
-   tablelookup, treelookup = setDictionaries()
-
    newtable = Artifact.load(tablelookup.get(key))
    newtree = qiime2.Artifact.import_data('Phylogeny[Rooted]',treelookup.get(key))
 
@@ -158,7 +156,14 @@ def permanovaSkbio(mdata, dm, columnName, geneName):
    dm = dm.view(skbio.DistanceMatrix)
    mdata = mdata.to_dataframe()
    pnovaResult = skbio.stats.distance.permanova(dm, mdata, column=columnName)
-   pnovaResult.to_csv('pnova-results/'+ geneName + '-' + columnName + '-pnova') 
+   #pnovaResult.to_csv('pnova-results/'+ geneName + '-' + columnName + '-pnova')
+   tStat = pnovaResult.get(key='test statistic') 
+   pValue = pnovaResult.get(key='p-value')
+   nGroups = pnovaResult.get(key='number of groups')
+   with open('pnovaResults.csv','a',newline='') as file:
+     writer = csv.writer(file)
+     writer.writerow([geneName, tStat, pValue, nGroups])
+
 
 
 
