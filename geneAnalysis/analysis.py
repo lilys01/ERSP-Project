@@ -3,7 +3,7 @@ from qiime2.plugins import diversity, feature_table, emperor, phylogeny, taxa
 from qiime2.plugins.diversity.visualizers import mantel
 from qiime2.plugins.feature_table.methods import rarefy
 from qiime2 import Artifact, Metadata
-import biom, os, glob, skbio
+import biom, os, glob, skbio, csv
 import pandas as pd
 import numpy as np 
 from partitioning import partition
@@ -30,44 +30,15 @@ def gentables():
 
 
 
-#set dictionaries with gene-tree and gene-table pairs for easy look up
-def setDictionaries():
-   tablelookup = {}
-   for f in glob.glob('gene-tables/*.qza'):
-     basename = os.path.basename(f)
-     no_extension = os.path.splitext(basename)[0]
-     tablelookup[no_extension] = f
-
-   treelookup = {}
-   for t in glob.glob('trees/*.nwk'):
-     base = os.path.basename(t)
-     no_ext = os.path.splitext(base)[0]
-     treelookup[no_ext] = t 
-   return tablelookup, treelookup
-
 '''
-
-compute unweughted unifrac on each gene with it's table and tree
+compute unweighted unifrac on each gene with it's table and tree
 compute pcoa and make an emperor plot for each
 add a new column for gene read counts to the metadata
-
+group covid+ metadata together
+perform mantel test on each gene against species tree
  '''
 
-def perGeneAnalysis(key):
-   #print(key) 
-  
-  # tablelookup = {}
-   #for f in glob.glob('gene-tables/*.qza'):
-    # basename = os.path.basename(f)
-     #no_extension = os.path.splitext(basename)[0]
-     #tablelookup[no_extension] = f
-
- #  treelookup = {}
- #  for t in glob.glob('trees/*.nwk'):
- #    base = os.path.basename(t)
- #    no_ext = os.path.splitext(base)[0]
- #    treelookup[no_ext] = t 
-   
+def perGeneAnalysis(key): 
    
    tablelookup, treelookup = setDictionaries()
 
@@ -125,29 +96,80 @@ def perGeneAnalysis(key):
 
    #mantel test on each gene against species tree (tree var imported above)
    speciesDm = qiime2.Artifact.load('../taxonomicAnalysis/taxonomic-dist-matrix.qza')
-   mantelTest(dm, speciesDm, label=True, name1=key, name2='species', intersectIds=True)  
+   #mantelTestQiime(dm, speciesDm, label=True, name1=key, name2='species', intersectIds=True)  
+   mantelTestSkbio(dm, speciesDm, key)
 
 
 
+'''
+creates two dictionaries to map gene names to their partitioned gene tables and their respective trees
+'''
+def setDictionaries():
+   tablelookup = {}
+   for f in glob.glob('gene-tables/*.qza'):
+     basename = os.path.basename(f)
+     no_extension = os.path.splitext(basename)[0]
+     tablelookup[no_extension] = f
+
+   treelookup = {}
+   for t in glob.glob('trees/*.nwk'):
+     base = os.path.basename(t)
+     no_ext = os.path.splitext(base)[0]
+     treelookup[no_ext] = t 
+   return tablelookup, treelookup
+
+
+
+
+'''
+save a summary of a feature table to help determine filtering
+'''
 def summarize(newtable, mdata, key):
    summary = feature_table.actions.summarize(table=newtable, sample_metadata=mdata)
    summary.visualization.save(key + '_summary.qzv')
 
-#takes in a list of columns in metadata to run permanova against 
+
+
+
+'''
+uses permanova qiime2 plugin to generate a permanova visualization
+categories - a list of strings representing the columns in metadata
+mdata - qiime2 metadata
+dm - qiime2 artifact, distance matrix
+geneName - string, the gene ID
+'''
 def permanovaVis(categories, mdata, dm, geneName):
    for dataType in categories: 
       data = mdata.get_column(dataType)
       results = diversity.visualizers.beta_group_significance(distance_matrix=dm, metadata=data, pairwise=True)
       results.visualization.save('pnova-results/'+ dataType + '_' + geneName + '_pnova')
 
+
+
+'''
+computes permanova using skbio and outputs a csv file with the results
+mdata - qiime2 metadata object
+dm - qiime2 artifact, distance matrix
+columnName - string, column in metadata
+geneName - string, gene ID
+
+'''
 def permanovaSkbio(mdata, dm, columnName, geneName):
    dm = dm.view(skbio.DistanceMatrix)
    mdata = mdata.to_dataframe()
    pnovaResult = skbio.stats.distance.permanova(dm, mdata, column=columnName)
    pnovaResult.to_csv('pnova-results/'+ geneName + '-' + columnName + '-pnova') 
 
-#mantel test on two distance matrices, label needs to be true to apply labels to visualization
-def mantelTest(dm1, dm2, label, name1, name2, intersectIds):
+
+
+'''
+qiime2 mantel test on two distance matrices, 
+dm1,dm2 - qiime2 distance matrix
+label - bool, needs to be true to apply labels to visualization
+name1,name2 - the labels for visualization
+intersectIds - bool, will filter out unmatched ids between dm's
+'''
+def mantelTestQiime(dm1, dm2, label, name1, name2, intersectIds):
    #dm1 = qiime2.Artifact.load(dm1)
    #dm2 = qiime2.Artifact.load(dm2)
    name1 = str(name1) 
@@ -160,11 +182,25 @@ def mantelTest(dm1, dm2, label, name1, name2, intersectIds):
       mant, = mant
       mant.save('mantel.qzv')
 
+
+
+
+'''
+mantel test using skbio
+'''
+def mantelTestSkbio(dm1, dm2, geneName):
+   dm1 = dm1.view(skbio.DistanceMatrix)
+   dm2 = dm2.view(skbio.DistanceMatrix)  
+   coeff, p_value, n = skbio.stats.distance.mantel(dm1, dm2, method='pearson', permutations=999, alternative='two-sided', strict=False) 
+   with open('mantelResults.csv','a',newline='') as file:
+     writer = csv.writer(file)
+     writer.writerow([geneName, coeff, p_value, n])
+
 '''
 computes unifrac and saves file 
 params:
-fttable - feature table 
-tree - corresponding phylogeny
+fttable - feature table qiime artifact 
+tree - corresponding phylogeny qiime artifact
 metric - unweighted_unifrac or weighted_unifrac 
 
 '''
