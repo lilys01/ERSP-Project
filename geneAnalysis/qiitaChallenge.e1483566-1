@@ -1,4 +1,0 @@
-ModuleCmd_Load.c(204):ERROR:105: Unable to locate a modulefile for 'git_2.9.3'
-++ python processor.py --parametersfile geneIds.txt --taskid 1
-/home/lsteiner/miniconda3/envs/qiime2-2020.11/lib/python3.6/site-packages/skbio/stats/ordination/_principal_coordinate_analysis.py:152: RuntimeWarning: The result contains negative eigenvalues. Please compare their magnitude with the magnitude of some of the largest positive eigenvalues. If the negative ones are smaller, it's probably safe to ignore them, but if they are large in magnitude, the results won't be useful. See the Notes section for more details. The smallest eigenvalue is -0.031361046148691105 and the largest is 1.783161156927773.
-  RuntimeWarning
