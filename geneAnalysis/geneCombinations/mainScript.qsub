@@ -1,0 +1,11 @@
+#PBS -l walltime=24:00:00
+#PBS -N qiitaChallenge 
+#PBS -m abe
+#PBS -t 1-1000
+
+cd $PBS_O_WORKDIR
+source activate qiime2-2021.2
+set -e
+set -x
+
+python processor.py --parametersfile keysTuples.txt --taskid $PBS_ARRAYID
