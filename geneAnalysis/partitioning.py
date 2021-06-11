@@ -5,7 +5,8 @@ Usage: parition(input.biom, gene_to_marker.map, output_dir)
 Adapation of /projects/wol/woltka/extract_markers.py 
 
 Output:
-    One BIOM table per marker gene.
+    One BIOM table per marker gene.  - edited to output one QIIME2 artifact per marker gene
+
 """
 
 from sys import argv
