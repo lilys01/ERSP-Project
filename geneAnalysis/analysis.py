@@ -52,7 +52,7 @@ def perGeneAnalysis(key, tablelookup, treelookup):
    #unifrac
    distMatrix = diversity.pipelines.beta_phylogenetic(table=rarefyFt, phylogeny=newtree, metric='unweighted_unifrac')
    dm = distMatrix.distance_matrix
-   dm.save('gene-dms/' + key + '-dist-matrix.qza')
+   dm.save('gene-dms/' + key + '-dist-matrix-unfilt.qza')
 
    PCoA = diversity.actions.pcoa(distance_matrix=dm)
    pcoaResults = PCoA.pcoa 
@@ -85,17 +85,17 @@ def perGeneAnalysis(key, tablelookup, treelookup):
    new_md = qiime2.Metadata(df)
 
    viz = emperor.actions.plot(pcoaResults, new_md)
-   viz.visualization.save('gene-emp-plots/' + key + '-emperor.qzv')
+   viz.visualization.save('gene-emp-plots/' + key + '-emperor-unfilt.qzv')
 
    
    #permanova on each gene table with new metadata column we made
-   permanovaSkbio(new_md, dm, 'covid_positive', key)
+   #permanovaSkbio(new_md, dm, 'covid_positive', key)
 
 
    #mantel test on each gene against species tree (tree var imported above)
-   speciesDm = qiime2.Artifact.load('../taxonomicAnalysis/taxonomic-dist-matrix.qza')
+   #speciesDm = qiime2.Artifact.load('../taxonomicAnalysis/taxonomic-dist-matrix.qza')
    #mantelTestQiime(dm, speciesDm, label=True, name1=key, name2='species', intersectIds=True)  
-   mantelTestSkbio(dm, speciesDm, key)
+   #mantelTestSkbio(dm, speciesDm, key)
 
 
 
@@ -140,7 +140,7 @@ def permanovaVis(categories, mdata, dm, geneName):
    for dataType in categories: 
       data = mdata.get_column(dataType)
       results = diversity.visualizers.beta_group_significance(distance_matrix=dm, metadata=data, pairwise=True)
-      results.visualization.save('pnova-results/'+ dataType + '_' + geneName + '_pnova')
+      results.visualization.save(dataType + '_' + geneName + '_pnova')
 
 
 
