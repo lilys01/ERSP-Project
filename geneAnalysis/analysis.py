@@ -89,13 +89,13 @@ def perGeneAnalysis(key, tablelookup, treelookup):
 
    
    #permanova on each gene table with new metadata column we made
-   #permanovaSkbio(new_md, dm, 'covid_positive', key)
+   permanovaSkbio(new_md, dm, 'covid_positive', key)
 
 
-   #mantel test on each gene against species tree (tree var imported above)
-   #speciesDm = qiime2.Artifact.load('../taxonomicAnalysis/taxonomic-dist-matrix.qza')
-   #mantelTestQiime(dm, speciesDm, label=True, name1=key, name2='species', intersectIds=True)  
-   #mantelTestSkbio(dm, speciesDm, key)
+   mantel test on each gene against species tree (tree var imported above)
+   speciesDm = qiime2.Artifact.load('../taxonomicAnalysis/taxonomic-dist-matrix.qza')
+   mantelTestQiime(dm, speciesDm, label=True, name1=key, name2='species', intersectIds=True)  
+   mantelTestSkbio(dm, speciesDm, key)
 
 
 
